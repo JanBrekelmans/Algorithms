@@ -29,6 +29,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: CD to correct dir
       run: |
+        tree
         cd Java/Algorithms
     - name: Set up JDK 17
       uses: actions/setup-java@v3
