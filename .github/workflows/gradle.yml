@@ -18,15 +18,16 @@ permissions:
 
 defaults:
   run:
-    working-directory: ./Java/Algorithms
+    working-directory: Java/Algorithms
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      working-drectory: ./Java/Algorithms
 
     steps:
-    - uses: actions/checkout@v3
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
