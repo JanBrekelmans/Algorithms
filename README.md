@@ -1,4 +1,4 @@
-https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/OnPullRequest.yml>/badge.svg
+![Actions Status](https://github.com/JanBrekelmans/Algorithms/actions/workflows/Windows.yml/badge.svg)
   
 # Introduction to Algorithms
 
