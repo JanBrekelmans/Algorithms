@@ -16,10 +16,6 @@ on:
 permissions:
   contents: read
 
-defaults:
-  run:
-    working-directory: Java/Algorithms
-
 jobs:
   build:
     runs-on: ubuntu-latest
