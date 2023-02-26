@@ -22,11 +22,7 @@ defaults:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    env:
-      working-drectory: ./Java/Algorithms
-
     steps:
     - name: Set up JDK 17
       uses: actions/setup-java@v3
