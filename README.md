@@ -1,3 +1,5 @@
+https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/OnPullRequest.yml>/badge.svg
+  
 # Introduction to Algorithms
 
 This github page is used to track the progress in implementing the different algorithms and data structures from the book "Introduction to Algorithms".
