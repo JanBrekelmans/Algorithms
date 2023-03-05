@@ -21,5 +21,5 @@ This github page is used to track the progress in implementing the different alg
 | Linked List | :white_check_mark: | :x: |
 | Hash table (chaining) | :white_check_mark: | :x: |
 | Hash table (open addressing) | :x: | :x: |
-| Binary Search Tree | :x: | :x: |
+| Binary Search Tree | :white_check_mark: | :white_check_mark: |
 | Red Black Tree | :x: | :x: |
