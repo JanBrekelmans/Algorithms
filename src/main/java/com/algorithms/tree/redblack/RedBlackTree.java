@@ -1,160 +1,176 @@
 package com.algorithms.tree.redblack;
 
-import java.util.Comparator;
-import java.util.function.Consumer;
+import com.algorithms.tree.TreeBase;
 
-public class RedBlackTree<T> {
-    private int size;
-    private final Comparator<T> comparator;
-    private Node<T> root;
+import java.util.Comparator;
+
+/**
+ * A red-black tree adhers to the following rules:
+ * <ul>
+ * <li>Each node is either red or black.</li>
+ * <li>The root node is black.</li>
+ * <li>All null leaves are black.</li>
+ * <li>A red node may not have red children.</li>
+ * <li>All paths from a node to the leaves contain the same number of black nodes.</li>
+ * </ul>
+ */
+public class RedBlackTree<T> extends TreeBase<T, RedBlackTree<T>.Node>{
+
 
     public RedBlackTree(Comparator<T> comparator) {
-        this.comparator = comparator;
-        size = 0;
+        super(comparator);
     }
 
-    public void inorderWalk(Consumer<T> cons) {
-        Node<T> current = root;
-    }
-
-    private void inorderWalk(Consumer<T> cons, Node<T> current) {
-        if(current != null) {
-            inorderWalk(cons, current.leftChild);
-            cons.accept(current.value);
-            inorderWalk(cons, current.rightChild);
-        }
-    }
-
-    public boolean contains(T value) {
-        return find(value) != null;
-    }
-
-    private Node<T> find(T value) {
-        Node<T> current = root;
-
-        while(current != null) {
-            int cmp = comparator.compare(value, current.value);
-            if(cmp < 0) {
-                current = current.leftChild;
-            } else if (cmp > 0) {
-                current = current.rightChild;
-            } else {
-                return current;
-            }
-        }
-
-        return null;
-    }
-
-    public T minimum() {
-        Node<T> m = minimum(root);
-        return m != null? m.value: null;
-    }
-
-    private Node<T> minimum(Node<T> current) {
-        while(current != null && current.leftChild != null) {
-            current = current.leftChild;
-        }
-        return current;
-    }
-
-    public T maximum() {
-        Node<T> m = maximum(root);
-        return m != null? m.value: null;
-    }
-
-    private Node<T> maximum(Node<T> current) {
-        while(current != null && current.rightChild != null) {
-            current = current.rightChild;
-        }
-        return current;
-    }
-
-    private boolean contains(T value, Node<T> current) {
-        if(current == null) {
-            return false;
-        } else return current.value.equals(value);
-    }
-
-    private void leftRotate(Node<T> x) {
-        Node<T> y = x.rightChild;
-        x.rightChild = y.leftChild;
-        if(y.leftChild != null) {
-            y.leftChild.parent = x;
-        }
-        y.parent = x.parent;
-        if(x.parent == null) {
-            root = y;
-        } else if (x == x.parent.leftChild) {
-            x.parent.leftChild = y;
-        } else {
-            x.parent.rightChild = y;
-        }
-        y.leftChild = x;
-        x.parent = y;
-    }
-
-    private void rightRotate(Node<T> x) {
-        Node<T> y = x.leftChild;
-        x.leftChild = y.rightChild;
-        if(y.rightChild != null) {
-            y.rightChild.parent = x;
-        }
-        y.parent = x.parent;
-        if(x.parent == null) {
-            root = y;
-        } else if (x == x.parent.rightChild) {
-            x.parent.rightChild = y;
-        } else {
-            x.parent.leftChild = y;
-        }
-        y.rightChild = x;
-        x.parent = y;
-    }
-
+    @Override
     public void insert(T value) {
-        Node<T> newNode = new Node<>(value, null, null, null, Node.NodeColor.RED);
-        Node<T> parent = null;
-        Node<T> current = root;
-        while(current != null) {
-            parent = current;
-            if(comparator.compare(value, current.value) < 0) {
-                current = current.leftChild;
-            } else if (comparator.compare(value, current.value) > 0) {
-                current = current.rightChild;
+        Node node = root;
+        Node parent = null;
+
+        while(node != null) {
+            parent = node;
+            if(comparator.compare(value, node.value) < 0) {
+                node = node.leftChild();
+            } else if (comparator.compare(value, node.value) > 0) {
+                node = node.rightChild();
             } else {
-                current.value = value;
                 return;
             }
         }
-        newNode.parent = parent;
+
+        Node newNode = new Node(value, Node.Color.RED);
         if(parent == null) {
             root = newNode;
-        } else if (comparator.compare(value, parent.value) < 0) {
+        } else if(comparator.compare(value, parent.value) < 0) {
             parent.leftChild = newNode;
         } else {
             parent.rightChild = newNode;
         }
-        insertFix(newNode);
+        newNode.parent = parent;
+
+        fixProperties(newNode);
     }
 
-    private void insertFix(Node<T> newNode) {
+    private void fixProperties(Node node) {
+        Node parent = node.parent();
+
+        if(parent == null) {
+            node.nodeColor = Node.Color.BLACK; // Set the color of the root to black
+            return;
+        }
+
+        if(parent.nodeColor == Node.Color.BLACK) {
+            return;
+        }
+
+        Node grandparent = parent.parent();
+
+        if(grandparent == null) {
+            parent.nodeColor = Node.Color.BLACK;
+            return;
+        }
+
+        Node uncle = getUncle(parent);
+        if(uncle != null && uncle.nodeColor == Node.Color.RED) {
+            parent.nodeColor = Node.Color.BLACK;
+            uncle.nodeColor = Node.Color.BLACK;
+            grandparent.nodeColor = Node.Color.RED;
+            fixProperties(grandparent);
+        } else if (parent == grandparent.leftChild()) {
+            if(node == parent.rightChild()) {
+                leftRotate(parent);
+                parent = node;
+            }
+            rightRotate(grandparent);
+            parent.nodeColor = Node.Color.BLACK;
+            grandparent.nodeColor = Node.Color.RED;
+        }  else {
+            if(node == parent.leftChild()) {
+                rightRotate(parent);
+                parent = node;
+            }
+            leftRotate(grandparent);
+            parent.nodeColor = Node.Color.BLACK;
+            grandparent.nodeColor = Node.Color.RED;
+        }
+    }
+
+    private Node getUncle(Node parent) {
+        Node grandparent = parent.parent();
+        if(grandparent.leftChild() == parent) {
+            return grandparent.rightChild();
+        } else if (grandparent.rightChild() == parent) {
+            return grandparent.leftChild();
+        }
+        throw  new IllegalStateException("Parent is not a child of its grandparent");
+    }
+
+    @Override
+    public boolean remove(T value) {
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    private void rightRotate(Node node) {
+        Node parent = node.parent();
+        Node leftChild = node.leftChild();
+        node.leftChild = leftChild.rightChild;
+        if(leftChild.rightChild != null) {
+            leftChild.rightChild.parent = node;
+        }
+
+        leftChild.rightChild = node;
+        node.parent = leftChild;
+
+        replaceParentsChild(parent, node, leftChild);
+    }
+
+    private void leftRotate(Node node) {
+        Node parent = node.parent();
+        Node rightChild = node.rightChild();
+        node.rightChild = rightChild.leftChild;
+        if(rightChild.leftChild != null) {
+            rightChild.leftChild.parent = node;
+        }
+
+        rightChild.leftChild = node;
+        node.parent = rightChild;
+
+        replaceParentsChild(parent, node, rightChild);
 
     }
 
-    static class Node<T> {
-        T value;
-        Node<T> leftChild, rightChild, parent;
-        NodeColor nodeColor;
+    private void replaceParentsChild(Node parent, Node oldChild, Node newChild) {
+        if(parent == null) {
+            root = newChild;
+        } else if (parent.leftChild == oldChild) {
+            parent.leftChild = newChild;
+        } else if (parent.rightChild == oldChild) {
+            parent.rightChild = newChild;
+        }
 
-        Node(T value, Node<T> parent, Node<T> leftChild, Node<T> rightChild, NodeColor nodeColor) {
-            this.value = value;
-            this.leftChild = leftChild;
-            this.rightChild = rightChild;
+        if(newChild != null) {
+            newChild.parent = parent;
+        }
+    }
+
+    @Override
+    protected String getNodeColor(Node node) {
+        return node.nodeColor == Node.Color.RED? "red" : "black";
+    }
+
+    protected class Node extends TreeBase<T, Node>.TreeNode {
+        public Color nodeColor;
+
+        public Node(T value, Color nodeColor) {
+            super(value);
             this.nodeColor = nodeColor;
         }
 
-        enum NodeColor {
+        public enum Color {
             RED,
             BLACK
         }

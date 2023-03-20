@@ -2,6 +2,9 @@ package com.algorithms.tree.binarysearchtree;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -19,7 +22,7 @@ public class BinarySearchTreeTest {
         bst.insert(1);
         assertEquals(1, bst.size());
         assertTrue(bst.contains(1));
-        assertTrue(bst.delete(1));
+        assertTrue(bst.remove(1));
     }
 
     @Test
@@ -32,7 +35,7 @@ public class BinarySearchTreeTest {
         assertEquals(1, bst.size());
 
         assertTrue(bst.contains(1));
-        assertTrue(bst.delete(1));
+        assertTrue(bst.remove(1));
     }
 
     @Test
@@ -50,9 +53,9 @@ public class BinarySearchTreeTest {
         assertEquals(3, bst.size());
         assertTrue(bst.contains(3));
 
-        assertTrue(bst.delete(1));
-        assertTrue(bst.delete(2));
-        assertTrue(bst.delete(3));
+        assertTrue(bst.remove(1));
+        assertTrue(bst.remove(2));
+        assertTrue(bst.remove(3));
     }
 
     @Test
@@ -64,9 +67,16 @@ public class BinarySearchTreeTest {
         elementToInsert.forEach(e -> {
             System.out.println(e);
             assertTrue(bst.contains(e));
-            bst.delete(e);
+            bst.remove(e);
             assertFalse(bst.contains(e));
         });
+    }
 
+    @Test
+    public void test() throws IOException {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>(Integer::compare);
+        List<Integer> elementToInsert = List.of(15,6,18,3,7,17,20,2,4,13,9);
+        elementToInsert.forEach(bst::insert);
+        bst.createTreeImage(Path.of(new File("").getAbsolutePath(), "img.png").toString());
     }
 }

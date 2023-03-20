@@ -7,9 +7,14 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url "https://github.com/vlsi/jgraphx-publish" }
+    maven { url "https://github.com/jgrapht/jgrapht" }
 }
 
 dependencies {
+    implementation 'com.github.vlsi.mxgraph:jgraphx:4.2.2'
+    implementation 'org.jgrapht:jgrapht-core:1.0.1'
+    implementation 'org.jgrapht:jgrapht-ext:1.0.1'
     implementation 'junit:junit:4.13.1'
     testImplementation 'junit:junit:4.13.1'
     testRuntimeOnly 'junit:junit:4.13.1'
